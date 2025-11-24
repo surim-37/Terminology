@@ -17,7 +17,7 @@ alter table post drop primary key;
 --fk 제약조건 삭제
 alter table post drop foreign key fk명
 --pk 제약조건 추가
-alter table post add constraint post_pk primary key(id); //primary key(id)에다가 post_pk라는 이름으로 pk만든다 // creat할땐 이름 안붙여도 외는데 따로 넣을때는 지정해야한다
+alter table post add constraint post_pk primary key(id); //primary key(id)에다가 post_pk라는 이름으로 pk만든다 // creat할땐 이름 안붙여도 외는데 따로 넣을때는 직접 지정해야한다
 --fk 제약조건 추가
 alter table post add constraint post_fk foreign key(author_id) references author(id);
 
@@ -38,3 +38,28 @@ alter table post add constraint post_fk foreign key(aasdf) references author(id)
 3. 새로운 fk에 맞는 테스트 
 3-1)삭제 테스트
 3-2)수정 테스트
+
+
+foreign key 정의
+1)기본 정의: 부모테이블에 없는 데이터가 자식테이블에 insert 될 수 없다.
+2)옵션
+2-1)on delete: 기본값 - restrict, cascade, set null
+2-2)on update: 기본값 -restrict, cascace, set null
++pk or unique에 걸어야한다.
+
+부모테이블이 삭제되는 경우(hard delete): 중요x -> 같이 삭제하자. cascade가 더 맞을 수 있다. (위 set null이 아니라)
+
+
+--deflault옵션(null,enum에서 사용)
+--어떤 컬럼이든 default 지정이 가능하지만, 일반적으로 enum타입 및 현재 시간에서 많이 사용
+alter table author modify column name varchar(255) default 'anonymous' //default 뒤에 null 샹략된 것
+--auto_increment: 숫자값을 입력안했을 때, 마지막 입력된 가장 큰 값에(ex.아이디) +1만큼 증가된 숫자값 자동으로 적용
+alter table author modify column id bigint auto_increment;
+alter table post modify column id bigint auto_increment;
+
+--uuid타입(실전에서 종종 쓴다) // 전세계적으로 어디서나 unique하다
+alter table post add column user_id char(36) default(uuid());
+
+id 값 설정
+1.bigint + auto_increment
+2. uuid()  -너무 크게 벌일 거라 분산DB를 할 거 같다 (but 서버분산=흔함,DB분산=흔치않다)
